@@ -81,17 +81,17 @@ root.geometry("300x500")
 root.resizable(False, False)
 root.configure(fg_color=background_color)
 
-# Get available fonts on the system
+# Get available fonts on the system.
 available_fonts = tkfont.families()
 
-# Choose Roboto if available, otherwise fallback to Arial
+# Choose Roboto if available, otherwise use Arial.
 font_family = "Roboto" if "Roboto" in available_fonts else "Arial"
 
-# Configure the global default Tk font
+# Set the default font.
 default_font = tkfont.nametofont("TkDefaultFont")
 default_font.configure(family=font_family, size=12)
 
-# Where main.py is
+# Where main.py is.
 base_dir = os.path.dirname(os.path.abspath(__file__))
 assets_dir = os.path.join(base_dir, "assets")
 
@@ -108,15 +108,21 @@ logo_image = ctk.CTkImage(
     size=(250, 250)
 )
 
-pencil_photo = ctk.CTkImage(
+pencil_image = ctk.CTkImage(
     light_image=Image.open(os.path.join(assets_dir, "pencil_image.png")),
     dark_image=Image.open(os.path.join(assets_dir, "pencil_image.png")),
     size=(22, 22)
 )
 
-folder_photo = ctk.CTkImage(
+folder_image = ctk.CTkImage(
     light_image=Image.open(os.path.join(assets_dir, "folder_image.png")),
     dark_image=Image.open(os.path.join(assets_dir, "folder_image.png")),
+    size=(22, 22)
+)
+
+tick_box_image = ctk.CTkImage(
+    light_image=Image.open(os.path.join(assets_dir, "tick_box_light.png")),
+    dark_image=Image.open(os.path.join(assets_dir, "tick_box_dark.png")),
     size=(22, 22)
 )
 
@@ -131,6 +137,23 @@ color_mode_label = ctk.CTkLabel(
 logo_label = ctk.CTkLabel(
     master=root,
     image=logo_image,
+    text=""
+)
+
+tick_box_format_label = ctk.CTkLabel(
+    master=root,
+    image=tick_box_image,
+    text=""
+)
+
+tick_box_file_type_label = ctk.CTkLabel(
+    master=root,
+    image=tick_box_image,
+    text=""
+)
+
+tick_box_folder_label = ctk.CTkLabel(
+    master=root,
     text=""
 )
 
@@ -155,7 +178,7 @@ prefix = ctk.CTkEntry(
 choose_folder_button = ctk.CTkButton(
     master=root,
     text="Choose folder      ",
-    image=folder_photo,
+    image=folder_image,
     anchor="w",
     compound="right",  
     fg_color=button_color,
@@ -166,13 +189,13 @@ choose_folder_button = ctk.CTkButton(
     width=185,
     font=(font_family, 13, "bold"),
     cursor="hand2",
-    command=select_folder
+    command=lambda: select_folder(root, tick_box_folder_label, tick_box_image)
 )
 
 rename_button = ctk.CTkButton(
     master=root,
     text="Rename images   ",
-    image=pencil_photo,
+    image=pencil_image,
     anchor="w",
     compound="right",  
     fg_color=button_color,
@@ -230,6 +253,9 @@ dropdown_file_type = ctk.CTkOptionMenu(
 # Widget positioning.
 color_mode_label.place(relx=1.0, rely=0.0, anchor="ne", x=-10, y=10)
 logo_label.place(relx=0.5, rely=0.20, anchor="center")
+tick_box_format_label.place(relx=0.88, rely=0.57, anchor="center")
+tick_box_file_type_label.place(relx=0.88, rely=0.67, anchor="center")
+tick_box_folder_label.place(relx=0.88, rely=0.77, anchor="center")
 prefix_label.place(relx=0.5, rely=0.38, anchor="center")
 prefix.place(relx=0.5, rely=0.45, anchor="center")
 dropdown_time_format.place(relx=0.5, rely=0.57, anchor="center")
