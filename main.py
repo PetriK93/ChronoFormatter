@@ -5,6 +5,9 @@ from PIL import Image
 import os
 import settings
 from modules.choose_folder import select_folder
+from modules.choose_format import format_filename, select_format
+from modules.choose_file_type import select_file_type
+from modules.rename_files import rename_files
 
 # Define colors for dark and light mode.
 dark_colors = {
@@ -13,7 +16,8 @@ dark_colors = {
     "hover": "#004400",
     "background": "#2b2b2b",
     "input": "white",
-    "font": "black"
+    "font": "black",
+    "preview": "white"
 }
 
 light_colors = {
@@ -22,9 +26,9 @@ light_colors = {
     "hover": "#69380C",
     "background": "#FFE5B4",
     "input": "white",
-    "font": "black"
+    "font": "black",
+    "preview": "black"
 }
-
 
 # Initialize colors based on the last used color mode.
 last_mode = settings.load_settings()
@@ -38,9 +42,35 @@ hover_color = colors["hover"]
 background_color = colors["background"]
 input_color = colors["input"]
 font_color = colors["font"]
+preview_color = colors ["preview"]
+
+# Store selected folder globally
+selected_folder = None
+
+# Select the folder and display the correct preview.
+def handle_folder_selection():
+    folder = select_folder(root, tick_box_folder_label, tick_box_image)
+    if folder:
+        global selected_folder
+        selected_folder = folder
+
+        # If format + file type already chosen, update preview properly
+        prefix_value = prefix.get().strip()
+        format_choice = choose_format.get()
+        file_type_choice = choose_file_type.get()
+
+        if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
+            # Example file extension depending on type
+            extension = ".jpg" if file_type_choice == "Images" else ".mp4"
+            new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
+            update_preview(preview_label, new_name, max_chars=44)
+        else:
+            update_preview(preview_label, "Ready to rename files", max_chars=44)
+    else:
+        update_preview(preview_label, "⚠️No folder selected", max_chars=44)
 
 def change_appearance_mode(event=None):
-    global button_color, border_color, hover_color, background_color, input_color, font_color
+    global button_color, border_color, hover_color, background_color, input_color, font_color, preview_color
     
     # Switch mode.
     current_mode = ctk.get_appearance_mode()
@@ -58,6 +88,7 @@ def change_appearance_mode(event=None):
     background_color = colors["background"]
     input_color = colors["input"]
     font_color = colors["font"]
+    preview_color = colors["preview"]
 
     # Update widgets.
     root.configure(fg_color=background_color)
@@ -66,13 +97,40 @@ def change_appearance_mode(event=None):
     prefix.configure(border_color=border_color, fg_color=input_color, text_color=font_color)
     dropdown_time_format.configure(fg_color=button_color, button_color=button_color, hover=hover_color)
     dropdown_file_type.configure(fg_color=button_color, button_color=button_color, hover=hover_color)
+    preview_label.configure(text_color=preview_color)
     
     # Save the new mode.
     settings.save_settings()
+    
+# Helper function to update preview with max character limit
+def update_preview(label, text, max_chars=44):
+    """
+    Updates the label text with a maximum visible character limit.
+    Adds '...' if the text is longer than max_chars.
+    """
+    if len(text) > max_chars:
+        text = text[:max_chars-3] + "..."
+    label.configure(text=text)
+    
+def update_preview_filename():
+    """
+    Generate the preview based on the current inputs and folder selection.
+    Does NOT rename any files.
+    """
+    if not selected_folder:
+        update_preview(preview_label, "⚠️No folder selected", max_chars=44)
+        return
 
-# Print dropdown menu choice.
-def check_choice(choice):
-    print(f"The user selected: {choice}")
+    prefix_value = prefix.get().strip()
+    format_choice = choose_format.get()
+    file_type_choice = choose_file_type.get()
+
+    if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
+        extension = ".jpg" if file_type_choice == "Images" else ".mp4"
+        new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
+        update_preview(preview_label, new_name, max_chars=44)
+    else:
+        update_preview(preview_label, "Ready to rename files", max_chars=44)
 
 # Main window.
 root = ctk.CTk()
@@ -142,13 +200,11 @@ logo_label = ctk.CTkLabel(
 
 tick_box_format_label = ctk.CTkLabel(
     master=root,
-    image=tick_box_image,
     text=""
 )
 
 tick_box_file_type_label = ctk.CTkLabel(
     master=root,
-    image=tick_box_image,
     text=""
 )
 
@@ -172,7 +228,8 @@ prefix = ctk.CTkEntry(
     border_width=2,
     corner_radius=4,
     border_color=border_color,
-    fg_color=input_color
+    fg_color=input_color,
+    text_color=font_color
 )
 
 choose_folder_button = ctk.CTkButton(
@@ -189,12 +246,12 @@ choose_folder_button = ctk.CTkButton(
     width=185,
     font=(font_family, 13, "bold"),
     cursor="hand2",
-    command=lambda: select_folder(root, tick_box_folder_label, tick_box_image)
+    command=handle_folder_selection
 )
 
 rename_button = ctk.CTkButton(
     master=root,
-    text="Rename images   ",
+    text="Rename files       ",
     image=pencil_image,
     anchor="w",
     compound="right",  
@@ -205,7 +262,15 @@ rename_button = ctk.CTkButton(
     height=40,
     width=185,
     font=(font_family, 13, "bold"),
-    cursor="hand2"
+    cursor="hand2",
+    command=lambda: rename_files(
+        selected_folder,
+        prefix.get().strip(),
+        choose_format.get(),
+        choose_file_type.get(),
+        preview_label,
+        update_preview
+    )
 )
 
 # Placeholder text for the dropdown menu.
@@ -217,7 +282,6 @@ dropdown_time_format = ctk.CTkOptionMenu(
     master=root,
     variable=choose_format,
     values=["ISO (YYYY-MM-DD)", "EU (DD-MM-YYYY)", "US (MM-DD-YYYY)"],
-    command=check_choice,
     button_color=button_color,
     fg_color=button_color,
     text_color="white",
@@ -226,7 +290,11 @@ dropdown_time_format = ctk.CTkOptionMenu(
     width=185,
     font=(font_family, 13, "bold"),
     cursor="hand2",
-    hover = hover_color
+    hover = hover_color,
+    command=lambda value: (
+        select_format(choose_format, tick_box_format_label, tick_box_image, preview_label, prefix),
+        update_preview_filename()
+    )
 )
 
 # Placeholder text for the dropdown menu.
@@ -238,7 +306,6 @@ dropdown_file_type = ctk.CTkOptionMenu(
     master=root,
     variable=choose_file_type,
     values=["Images", "Videos"],
-    command=check_choice,
     button_color=button_color,
     fg_color=button_color,
     text_color="white",
@@ -247,7 +314,23 @@ dropdown_file_type = ctk.CTkOptionMenu(
     width=185,
     font=(font_family, 13, "bold"),
     cursor="hand2",
-    hover = hover_color
+    hover = hover_color,
+    command=lambda value: select_file_type(choose_file_type, tick_box_file_type_label, tick_box_image)
+)
+
+dropdown_file_type.configure(
+    command=lambda value: (
+        select_file_type(choose_file_type, tick_box_file_type_label, tick_box_image),
+        update_preview_filename()
+    )
+)
+
+# Preview the name of the file.
+preview_label = ctk.CTkLabel(
+    master=root,
+    text="Preview file name",
+    font=(font_family, 12),
+    text_color=preview_color
 )
 
 # Widget positioning.
@@ -262,12 +345,14 @@ dropdown_time_format.place(relx=0.5, rely=0.57, anchor="center")
 dropdown_file_type.place(relx=0.5, rely=0.67, anchor="center")
 choose_folder_button.place(relx=0.5, rely=0.77, anchor="center")
 rename_button.place(relx=0.5, rely=0.87, anchor="center")
+preview_label.place(relx=0.5, rely=0.95, anchor="center")
 
 # Make sure that color mode is always visible.
 color_mode_label.lift()
 
 # Bindings.
 color_mode_label.bind("<Button-1>", lambda event: change_appearance_mode())
+prefix.bind("<KeyRelease>", lambda event: update_preview_filename())
 
 # Save settings on exit.
 root.protocol("WM_DELETE_WINDOW", lambda: (settings.save_settings(), root.destroy()))
