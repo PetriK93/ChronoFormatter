@@ -64,11 +64,11 @@ def handle_folder_selection():
         if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
             extension = ".jpg" if file_type_choice == "Images" else ".mp4"
             new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
-            update_preview(preview_label, new_name, max_chars=44)
+            update_preview(preview_label, new_name, max_chars=35)
         else:
-            update_preview(preview_label, "Ready to rename files", max_chars=44)
+            update_preview(preview_label, "Ready to rename files", max_chars=35)
     else:
-        update_preview(preview_label, "⚠️No folder selected", max_chars=44)
+        update_preview(preview_label, "⚠️No folder selected", max_chars=35)
 
 def change_appearance_mode(event=None):
     global button_color, border_color, hover_color, background_color, input_color, font_color, preview_color
@@ -104,7 +104,7 @@ def change_appearance_mode(event=None):
     settings.save_settings()
     
 # Helper function to update preview with max character limit
-def update_preview(label, text, max_chars=44):
+def update_preview(label, text, max_chars=35):
     """
     Updates the label text with a maximum visible character limit.
     Adds '...' if the text is longer than max_chars.
@@ -119,7 +119,7 @@ def update_preview_filename():
     Does NOT rename any files.
     """
     if not selected_folder:
-        update_preview(preview_label, "⚠️No folder selected", max_chars=44)
+        update_preview(preview_label, "⚠️No folder selected", max_chars=35)
         return
 
     prefix_value = prefix.get().strip()
@@ -129,9 +129,9 @@ def update_preview_filename():
     if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
         extension = ".jpg" if file_type_choice == "Images" else ".mp4"
         new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
-        update_preview(preview_label, new_name, max_chars=44)
+        update_preview(preview_label, new_name, max_chars=35)
     else:
-        update_preview(preview_label, "Ready to rename files", max_chars=44)
+        update_preview(preview_label, "Ready to rename files", max_chars=35)
         
 def handle_rename():
     format_choice = choose_format.get()

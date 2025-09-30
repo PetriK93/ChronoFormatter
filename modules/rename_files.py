@@ -9,7 +9,7 @@ def rename_files(
     file_type_choice,
     preview_label,
     update_preview,
-    max_chars=44
+    max_chars=35
 ):
     """
     Rename files in the selected folder based on prefix, format, and file type.
