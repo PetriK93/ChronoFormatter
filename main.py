@@ -73,6 +73,17 @@ def handle_folder_selection():
 def change_appearance_mode(event=None):
     global button_color, border_color, hover_color, background_color, input_color, font_color, preview_color
     
+    # Update tick box images for the new color mode
+    tick_box_format_label.configure(image=tick_box_image if tick_box_format_label.image else None)
+    tick_box_format_label.image = tick_box_format_label.image
+
+    tick_box_file_type_label.configure(image=tick_box_image if tick_box_file_type_label.image else None)
+    tick_box_file_type_label.image = tick_box_file_type_label.image
+
+    tick_box_folder_label.configure(image=tick_box_image if tick_box_folder_label.image else None)
+    tick_box_folder_label.image = tick_box_folder_label.image
+
+    
     # Switch mode.
     current_mode = ctk.get_appearance_mode()
     if current_mode == "Dark":
@@ -114,10 +125,6 @@ def update_preview(label, text, max_chars=35):
     label.configure(text=text)
     
 def update_preview_filename():
-    """
-    Generate the preview based on the current inputs and folder selection.
-    Does NOT rename any files.
-    """
     if not selected_folder:
         update_preview(preview_label, "⚠️No folder selected", max_chars=35)
         return
@@ -127,7 +134,25 @@ def update_preview_filename():
     file_type_choice = choose_file_type.get()
 
     if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
-        extension = ".jpg" if file_type_choice == "Images" else ".mp4"
+        # Determine valid extensions based on file type
+        if file_type_choice == "Images":
+            valid_extensions = [".jpg", ".jpeg", ".png"]
+        else:  # Videos
+            valid_extensions = [".mp4", ".avi", ".mov"]
+
+        # Use the first file that matches the chosen type
+        extension = ""
+        for f in os.listdir(selected_folder):
+            if os.path.isfile(os.path.join(selected_folder, f)):
+                ext = os.path.splitext(f)[1].lower()
+                if ext in valid_extensions:
+                    extension = ext
+                    break
+
+        # Fallback if no matching files found
+        if not extension:
+            extension = valid_extensions[0]
+
         new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
         update_preview(preview_label, new_name, max_chars=35)
     else:
@@ -137,7 +162,6 @@ def handle_rename():
     format_choice = choose_format.get()
     file_type_choice = choose_file_type.get()
 
-    # Check conditions
     if (
         selected_folder
         and format_choice not in ["Choose format", ""]
@@ -152,10 +176,12 @@ def handle_rename():
             preview_label,
             update_preview
         )
-        # Show success popup
         messagebox.showinfo("Success", "You successfully renamed the files!")
     else:
-        messagebox.showwarning("Incomplete", "⚠️ Please choose a format, file type, and folder before renaming.")
+        messagebox.showwarning(
+            "Incomplete",
+            "⚠️ Please choose a format, file type, and folder before renaming."
+        )
 
 # Main window.
 root = ctk.CTk()
