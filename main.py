@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import font as tkfont
+from tkinter import messagebox
 import customtkinter as ctk
 from PIL import Image
 import os
@@ -49,18 +50,18 @@ selected_folder = None
 
 # Select the folder and display the correct preview.
 def handle_folder_selection():
+    global selected_folder
     folder = select_folder(root, tick_box_folder_label, tick_box_image)
-    if folder:
-        global selected_folder
+
+    if folder:  # only overwrite if a folder was chosen
         selected_folder = folder
 
-        # If format + file type already chosen, update preview properly
+    if selected_folder:  # use the stored folder for preview
         prefix_value = prefix.get().strip()
         format_choice = choose_format.get()
         file_type_choice = choose_file_type.get()
 
         if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
-            # Example file extension depending on type
             extension = ".jpg" if file_type_choice == "Images" else ".mp4"
             new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
             update_preview(preview_label, new_name, max_chars=44)
@@ -131,6 +132,30 @@ def update_preview_filename():
         update_preview(preview_label, new_name, max_chars=44)
     else:
         update_preview(preview_label, "Ready to rename files", max_chars=44)
+        
+def handle_rename():
+    format_choice = choose_format.get()
+    file_type_choice = choose_file_type.get()
+
+    # Check conditions
+    if (
+        selected_folder
+        and format_choice not in ["Choose format", ""]
+        and file_type_choice in ["Images", "Videos"]
+    ):
+        # Perform rename
+        rename_files(
+            selected_folder,
+            prefix.get().strip(),
+            format_choice,
+            file_type_choice,
+            preview_label,
+            update_preview
+        )
+        # Show success popup
+        messagebox.showinfo("Success", "You successfully renamed the files!")
+    else:
+        messagebox.showwarning("Incomplete", "⚠️ Please choose a format, file type, and folder before renaming.")
 
 # Main window.
 root = ctk.CTk()
@@ -263,14 +288,7 @@ rename_button = ctk.CTkButton(
     width=185,
     font=(font_family, 13, "bold"),
     cursor="hand2",
-    command=lambda: rename_files(
-        selected_folder,
-        prefix.get().strip(),
-        choose_format.get(),
-        choose_file_type.get(),
-        preview_label,
-        update_preview
-    )
+    command=handle_rename
 )
 
 # Placeholder text for the dropdown menu.

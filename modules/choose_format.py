@@ -1,28 +1,29 @@
 # choose_format.py
 from datetime import datetime
 
-def format_filename(prefix, format_choice, original_name, extension, counter=None):
+def format_filename(prefix, format_choice, original_name, extension, counter=None, custom_date=None):
     """
     Build a new filename based on prefix, chosen date format, and optional counter.
+    If custom_date is provided, use it instead of datetime.now()
     """
-    # Decide date format
-    if format_choice == "ISO (YYYY-MM-DD)":
-        date_str = datetime.now().strftime("%Y-%m-%d")
-    elif format_choice == "EU (DD-MM-YYYY)":
-        date_str = datetime.now().strftime("%d-%m-%Y")
-    elif format_choice == "US (MM-DD-YYYY)":
-        date_str = datetime.now().strftime("%m-%d-%Y")
-    else:
-        date_str = datetime.now().strftime("%Y-%m-%d")  # default ISO
+    date = custom_date or datetime.now()  # Use custom date if given
 
-    # Base name (completely new, ignoring original_name)
+    if format_choice == "ISO (YYYY-MM-DD)":
+        date_str = date.strftime("%Y-%m-%d")
+    elif format_choice == "EU (DD-MM-YYYY)":
+        date_str = date.strftime("%d-%m-%Y")
+    elif format_choice == "US (MM-DD-YYYY)":
+        date_str = date.strftime("%m-%d-%Y")
+    else:
+        date_str = date.strftime("%Y-%m-%d")  # default ISO
+
     base_name = f"{prefix}_{date_str}"
 
-    # Add counter if provided
     if counter is not None:
-        base_name += f"_{counter:03d}"  # e.g., 001, 002, 003
+        base_name += f"_{counter:03d}"
 
     return base_name + extension
+
 
 
 def select_format(choice_var, tick_label, tick_box_image, preview_label=None, prefix_entry=None):

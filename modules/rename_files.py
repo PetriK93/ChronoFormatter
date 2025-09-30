@@ -1,5 +1,6 @@
 import os
 from modules.choose_format import format_filename
+from datetime import datetime
 
 def rename_files(
     selected_folder,
@@ -28,23 +29,41 @@ def rename_files(
         update_preview(preview_label, "⚠️ Invalid file type", max_chars)
         return
 
+    # Collect only valid files
+    files = [
+        f for f in os.listdir(selected_folder)
+        if os.path.isfile(os.path.join(selected_folder, f)) 
+        and os.path.splitext(f)[1].lower() in valid_extensions
+    ]
+
+    # Sort by creation time (oldest → newest)
+    files.sort(key=lambda f: os.path.getctime(os.path.join(selected_folder, f)))
+
     renamed_any = False
 
-    # Loop through files in the folder
-    for i, filename in enumerate(os.listdir(selected_folder), start=1):
+    # Loop through sorted files
+    for i, filename in enumerate(files, start=1):  # <-- enumerate sorted 'files' list
         file_path = os.path.join(selected_folder, filename)
+        extension = os.path.splitext(filename)[1]
 
-        # Only rename valid files
-        if os.path.isfile(file_path) and os.path.splitext(filename)[1].lower() in valid_extensions:
-            extension = os.path.splitext(filename)[1]
-            new_name = format_filename(prefix_value, format_choice, "", extension, counter=i)
-            new_path = os.path.join(selected_folder, new_name)
+        # Get the file's creation date
+        creation_timestamp = os.path.getctime(file_path)
+        creation_date = datetime.fromtimestamp(creation_timestamp)
 
-            os.rename(file_path, new_path)
-            renamed_any = True
+        # Pass the creation_date to format_filename
+        new_name = format_filename(
+            prefix_value,
+            format_choice,
+            "",
+            extension,
+            counter=i,
+            custom_date=creation_date  # <-- make sure your format_filename accepts this
+        )
 
-            # Update preview with the last renamed file
-            update_preview(preview_label, new_name, max_chars=max_chars)
+        new_path = os.path.join(selected_folder, new_name)
+        os.rename(file_path, new_path)
+        renamed_any = True
+        update_preview(preview_label, new_name, max_chars=max_chars)
 
     if not renamed_any:
         update_preview(preview_label, "⚠️ No matching files found", max_chars)
