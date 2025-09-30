@@ -56,6 +56,15 @@ def handle_folder_selection():
     if folder:  # only overwrite if a folder was chosen
         selected_folder = folder
 
+    # Always update the tick box, even if folder is None
+    if selected_folder:
+        tick_box_folder_label.ctk_image = tick_box_image
+        tick_box_folder_label.configure(image=tick_box_image)
+    else:
+        tick_box_folder_label.ctk_image = None
+        tick_box_folder_label.configure(image="")  # remove image if canceled
+
+    # Update preview
     if selected_folder:  # use the stored folder for preview
         prefix_value = prefix.get().strip()
         format_choice = choose_format.get()
@@ -70,21 +79,11 @@ def handle_folder_selection():
     else:
         update_preview(preview_label, "⚠️No folder selected", max_chars=35)
 
+# Change appearance mode function
 def change_appearance_mode(event=None):
     global button_color, border_color, hover_color, background_color, input_color, font_color, preview_color
-    
-    # Update tick box images for the new color mode
-    tick_box_format_label.configure(image=tick_box_image if tick_box_format_label.image else None)
-    tick_box_format_label.image = tick_box_format_label.image
 
-    tick_box_file_type_label.configure(image=tick_box_image if tick_box_file_type_label.image else None)
-    tick_box_file_type_label.image = tick_box_file_type_label.image
-
-    tick_box_folder_label.configure(image=tick_box_image if tick_box_folder_label.image else None)
-    tick_box_folder_label.image = tick_box_folder_label.image
-
-    
-    # Switch mode.
+    # Switch mode first
     current_mode = ctk.get_appearance_mode()
     if current_mode == "Dark":
         ctk.set_appearance_mode("Light")
@@ -93,7 +92,7 @@ def change_appearance_mode(event=None):
         ctk.set_appearance_mode("Dark")
         colors = dark_colors
 
-    # Update global color variables.
+    # Update global colors
     button_color = colors["button"]
     border_color = colors["border"]
     hover_color = colors["hover"]
@@ -102,7 +101,7 @@ def change_appearance_mode(event=None):
     font_color = colors["font"]
     preview_color = colors["preview"]
 
-    # Update widgets.
+    # Update widgets
     root.configure(fg_color=background_color)
     choose_folder_button.configure(fg_color=button_color, hover_color=hover_color)
     rename_button.configure(fg_color=button_color, hover_color=hover_color)
@@ -110,8 +109,14 @@ def change_appearance_mode(event=None):
     dropdown_time_format.configure(fg_color=button_color, button_color=button_color, hover=hover_color)
     dropdown_file_type.configure(fg_color=button_color, button_color=button_color, hover=hover_color)
     preview_label.configure(text_color=preview_color)
-    
-    # Save the new mode.
+
+    # Update tick boxes if they were previously set
+    for tick_label in [tick_box_format_label, tick_box_file_type_label, tick_box_folder_label]:
+        if tick_label.ctk_image:  # check custom attribute instead of .image
+            tick_label.configure(image=tick_box_image)
+            tick_label.ctk_image = tick_box_image
+
+    # Save the new mode
     settings.save_settings()
     
 # Helper function to update preview with max character limit
@@ -269,6 +274,10 @@ prefix_label = ctk.CTkLabel(
     text="Enter a prefix for your images:",
     font=(font_family, 14)
 )
+
+tick_box_format_label.ctk_image = None
+tick_box_file_type_label.ctk_image = None
+tick_box_folder_label.ctk_image = None
 
 prefix = ctk.CTkEntry(
     master=root,
