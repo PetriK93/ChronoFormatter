@@ -32,8 +32,6 @@ US (MM-DD-YYYY)
    git clone https://github.com/PetriK93/ChronoFormatter.git
    cd ChronoFormatter
 
-   ```
-
 2. Create a virtual environment (optional but recommended)  
    python -m venv venv  
    source venv/bin/activate # On Linux / macOS  
@@ -44,9 +42,6 @@ US (MM-DD-YYYY)
 
 4. Run the app  
    python main.py
-
-   ```
-
    ```
 
 ## How to use the app
