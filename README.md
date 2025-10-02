@@ -42,7 +42,7 @@ US (MM-DD-YYYY)
 4. Run the app  
    python main.py
 
-## How to use the app
+## 💻 How to use the app
 
 1. Enter a prefix (optional).
 
