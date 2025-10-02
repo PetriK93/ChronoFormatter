@@ -1,3 +1,5 @@
+# ChronoFormatter
+
 ![Preview](https://github.com/user-attachments/assets/ea98e9d6-dd7f-4ac5-9c67-fba59c161369)
 
 ChronoFormatter is a simple desktop tool built with Python, Tkinter, and CustomTkinter for renaming image and video files in bulk.
