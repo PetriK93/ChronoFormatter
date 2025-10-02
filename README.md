@@ -27,12 +27,9 @@ US (MM-DD-YYYY)
 
 ## 🚀 Installation
 
-1. ```bash
-   Clone the repository
+1. Clone the repository
    git clone https://github.com/PetriK93/ChronoFormatter.git
    cd ChronoFormatter
-
-   ```
 
 2. Create a virtual environment (optional but recommended)  
    python -m venv venv  
@@ -44,10 +41,6 @@ US (MM-DD-YYYY)
 
 4. Run the app  
    python main.py
-
-   ```
-
-   ```
 
 ## How to use the app
 
