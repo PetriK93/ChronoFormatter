@@ -27,8 +27,8 @@ US (MM-DD-YYYY)
 
 ## 🚀 Installation
 
-1. Clone the repository
-   git clone https://github.com/PetriK93/ChronoFormatter.git
+1. Clone the repository  
+   git clone https://github.com/PetriK93/ChronoFormatter.git  
    cd ChronoFormatter
 
 2. Create a virtual environment (optional but recommended)  
