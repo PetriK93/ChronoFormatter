@@ -3,7 +3,7 @@
 ChronoFormatter is a simple desktop tool built with Python, Tkinter, and CustomTkinter for renaming image and video files in bulk.
 It provides a clean interface where you can choose a folder, apply a date format, add an optional prefix, and quickly rename your files.
 
-✨ Features
+## ✨ Features
 
 🗂 Choose a folder containing images or videos.
 
@@ -25,11 +25,14 @@ US (MM-DD-YYYY)
 
 ✅ Success and warning dialogs to guide you.
 
-🚀 Installation
+## 🚀 Installation
 
-1. Clone the repository  
-   git clone https://github.com/PetriK93/ChronoFormatter.git  
+1. ```bash
+   Clone the repository
+   git clone https://github.com/PetriK93/ChronoFormatter.git
    cd ChronoFormatter
+
+   ```
 
 2. Create a virtual environment (optional but recommended)  
    python -m venv venv  
@@ -42,7 +45,11 @@ US (MM-DD-YYYY)
 4. Run the app  
    python main.py
 
-How to use the app
+   ```
+
+   ```
+
+## How to use the app
 
 1. Enter a prefix (optional).
 
@@ -56,7 +63,7 @@ How to use the app
 
 Your files will be renamed automatically with the chosen format. 🎉
 
-📦 Dependencies
+## 📦 Dependencies
 
 Python 3.8+
 
@@ -66,6 +73,6 @@ Pillow (PIL)
 
 Tkinter (comes with Python standard library)
 
-📝 License
+## 📝 License
 
 This project is open source under the MIT License.
