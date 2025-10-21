@@ -1,6 +1,7 @@
 import os
 from modules.choose_format import format_filename
 from datetime import datetime
+from tkinter import messagebox
 
 def rename_files(
     selected_folder,
@@ -43,6 +44,16 @@ def rename_files(
     if not files:
         update_preview(preview_label, "⚠️ No matching files found", max_chars)
         return
+    
+    # Confirmation popup before renaming
+    confirm = messagebox.askyesno(
+        "Confirm Rename",
+        f"Are you sure you want to rename all files?"
+    )
+
+    if not confirm:
+        update_preview(preview_label, "❌ Operation canceled", max_chars)
+        return
 
     # Rename files
     for i, filename in enumerate(files, start=1):
@@ -68,3 +79,4 @@ def rename_files(
 
         # Update preview for each file (last file remains visible)
         update_preview(preview_label, new_name, max_chars=max_chars)
+    messagebox.showinfo("Success", "Files have been successfully renamed.")

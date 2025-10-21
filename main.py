@@ -181,7 +181,6 @@ def handle_rename():
             preview_label,
             update_preview
         )
-        messagebox.showinfo("Success", "You successfully renamed the files!")
     else:
         messagebox.showwarning(
             "Incomplete",
