@@ -1,4 +1,3 @@
-# choose_format.py
 from datetime import datetime
 
 def format_filename(prefix, format_choice, extension, counter=None, custom_date=None):
