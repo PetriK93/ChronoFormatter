@@ -14,9 +14,9 @@ def select_file_type(choice_var: StringVar, tick_label: ctk.CTkLabel, tick_box_i
     Returns:
         str: 'Images' or 'Videos'
     """
-    # Show tick mark
+    # Show tick mark.
     tick_label.configure(image=tick_box_image)
     tick_label.image = tick_box_image
 
-    # Return current selection
+    # Return current selection.
     return choice_var.get()

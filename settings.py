@@ -18,6 +18,6 @@ def load_settings():
                 settings = json.load(f)
                 return settings.get("appearance_mode", "Dark")
         except json.JSONDecodeError:
-            # File is empty or corrupted, return default
+            # File is empty or corrupted, return default.
             return "Dark"
     return "Dark"

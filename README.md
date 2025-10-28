@@ -29,7 +29,7 @@ US (MM-DD-YYYY)
 
 🌗 Dark and light mode toggle with saved preferences.
 
-✅ Success and warning dialogs to guide you.
+✅ Success, warning and confirmation dialogs to guide you.
 
 ---
 
@@ -72,7 +72,7 @@ Your files will be renamed automatically with the chosen format. 🎉
 
 Python 3.8+
 
-customtkinter
+Customtkinter
 
 Pillow (PIL)
 

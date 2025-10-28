@@ -35,8 +35,9 @@ light_colors = {
 last_mode = settings.load_settings()
 ctk.set_appearance_mode(last_mode)
 current_mode = ctk.get_appearance_mode()
-colors = dark_colors if current_mode == "Dark" else light_colors
 
+# Set global colors based on the current mode.
+colors = dark_colors if current_mode == "Dark" else light_colors
 button_color = colors["button"]
 border_color = colors["border"]
 hover_color = colors["hover"]
@@ -45,7 +46,7 @@ input_color = colors["input"]
 font_color = colors["font"]
 preview_color = colors ["preview"]
 
-# Store selected folder globally
+# Store selected folder globally.
 selected_folder = None
 
 # Select the folder and display the correct preview.
@@ -53,37 +54,37 @@ def handle_folder_selection():
     global selected_folder
     folder = select_folder(root, tick_box_folder_label, tick_box_image)
 
-    if folder:  # only overwrite if a folder was chosen
+    if folder:
         selected_folder = folder
 
-    # Always update the tick box, even if folder is None
+    # Always update the tick box, even if folder is None.
     if selected_folder:
         tick_box_folder_label.ctk_image = tick_box_image
         tick_box_folder_label.configure(image=tick_box_image)
     else:
         tick_box_folder_label.ctk_image = None
-        tick_box_folder_label.configure(image="")  # remove image if canceled
+        tick_box_folder_label.configure(image="")
 
-    # Update preview
-    if selected_folder:  # use the stored folder for preview
+    # Update preview.
+    if selected_folder:
         prefix_value = prefix.get().strip()
         format_choice = choose_format.get()
         file_type_choice = choose_file_type.get()
 
         if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
             extension = ".jpg" if file_type_choice == "Images" else ".mp4"
-            new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
+            new_name = format_filename(prefix_value, format_choice, extension, counter=1)
             update_preview(preview_label, new_name, max_chars=35)
         else:
             update_preview(preview_label, "Ready to rename files", max_chars=35)
     else:
         update_preview(preview_label, "⚠️No folder selected", max_chars=35)
 
-# Change appearance mode function
+# Change appearance mode function.
 def change_appearance_mode(event=None):
     global button_color, border_color, hover_color, background_color, input_color, font_color, preview_color
 
-    # Switch mode first
+    # Switch color mode.
     current_mode = ctk.get_appearance_mode()
     if current_mode == "Dark":
         ctk.set_appearance_mode("Light")
@@ -92,7 +93,7 @@ def change_appearance_mode(event=None):
         ctk.set_appearance_mode("Dark")
         colors = dark_colors
 
-    # Update global colors
+    # Update global colors.
     button_color = colors["button"]
     border_color = colors["border"]
     hover_color = colors["hover"]
@@ -101,7 +102,7 @@ def change_appearance_mode(event=None):
     font_color = colors["font"]
     preview_color = colors["preview"]
 
-    # Update widgets
+    # Update widgets.
     root.configure(fg_color=background_color)
     choose_folder_button.configure(fg_color=button_color, hover_color=hover_color)
     rename_button.configure(fg_color=button_color, hover_color=hover_color)
@@ -110,16 +111,16 @@ def change_appearance_mode(event=None):
     dropdown_file_type.configure(fg_color=button_color, button_color=button_color, hover=hover_color)
     preview_label.configure(text_color=preview_color)
 
-    # Update tick boxes if they were previously set
+    # Update tick boxes if they were previously set.
     for tick_label in [tick_box_format_label, tick_box_file_type_label, tick_box_folder_label]:
-        if tick_label.ctk_image:  # check custom attribute instead of .image
+        if tick_label.ctk_image:
             tick_label.configure(image=tick_box_image)
             tick_label.ctk_image = tick_box_image
 
-    # Save the new mode
+    # Save the new mode.
     settings.save_settings()
     
-# Helper function to update preview with max character limit
+# Helper function to update preview with max character limit.
 def update_preview(label, text, max_chars=35):
     """
     Updates the label text with a maximum visible character limit.
@@ -139,13 +140,13 @@ def update_preview_filename():
     file_type_choice = choose_file_type.get()
 
     if format_choice not in ["Choose format", ""] and file_type_choice in ["Images", "Videos"]:
-        # Determine valid extensions based on file type
+        # Determine valid extensions based on file type.
         if file_type_choice == "Images":
             valid_extensions = [".jpg", ".jpeg", ".png"]
-        else:  # Videos
-            valid_extensions = [".mp4", ".avi", ".mov"]
+        else:
+            valid_extensions = [".mp4", ".avi", ".mov", ".mkv"]
 
-        # Use the first file that matches the chosen type
+        # Use the first file that matches the chosen type.
         extension = ""
         for f in os.listdir(selected_folder):
             if os.path.isfile(os.path.join(selected_folder, f)):
@@ -154,11 +155,11 @@ def update_preview_filename():
                     extension = ext
                     break
 
-        # Fallback if no matching files found
+        # Fallback if no matching files found.
         if not extension:
             extension = valid_extensions[0]
 
-        new_name = format_filename(prefix_value, format_choice, "", extension, counter=1)
+        new_name = format_filename(prefix_value, format_choice, extension, counter=1)
         update_preview(preview_label, new_name, max_chars=35)
     else:
         update_preview(preview_label, "Ready to rename files", max_chars=35)
@@ -172,7 +173,7 @@ def handle_rename():
         and format_choice not in ["Choose format", ""]
         and file_type_choice in ["Images", "Videos"]
     ):
-        # Perform rename
+        # Perform rename.
         rename_files(
             selected_folder,
             prefix.get().strip(),
@@ -329,7 +330,7 @@ rename_button = ctk.CTkButton(
 choose_format = tk.StringVar()
 choose_format.set("Choose format")
 
-# Dropdown menu to select the desired time format for the images.
+# Dropdown menu to select the desired time format.
 dropdown_time_format = ctk.CTkOptionMenu(
     master=root,
     variable=choose_format,
